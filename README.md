@@ -9,7 +9,7 @@ tarp-and-tent-pole wings open on your back.
 > in single-player v3.3.0 (b18). The schematic's trader and loot entries are
 > confirmed in the running game but it has not yet been seen in a trader or a
 > container (that needs a long playthrough), and the Parachute exclusion is
-> untested. Results are in `plan.md`, section 15.
+> untested.
 
 ## What it does
 
@@ -109,13 +109,14 @@ The game must be closed while deploying. Blender previews land in `unity/preview
 ## Testing
 
 Read `output_log.txt` for `[GliderSuit]`, `Exception` and XML patch warnings.
-The phase-by-phase test plan (T1-T26) is in `plan.md` section 9.
+With `debug` on, the log also has the flight state twice a second, every wing
+open and fold, and every fall impact with the health before and after.
 
 A quick first pass:
 
 1. `glider status` - expect `patches=ok`.
-2. `glider kit`, wear the outfit, `glider bones` - paste the bone names into
-   `plan.md` section 3.4 (shoulder bone names are still unconfirmed).
+2. `glider kit` and wear the outfit - the folded wings and harness appear on
+   your back (`sv` switches to third person to see them).
 3. `glider up 80`, press Jump - the wings should open without a jolt.
 4. Hands off: settle near 25 m/s with a ~2.1 m/s sink.
 5. Hold Back until the nose drops - that is the stall.
