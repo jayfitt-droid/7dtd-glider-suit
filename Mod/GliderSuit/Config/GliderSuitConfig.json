@@ -1,0 +1,83 @@
+{
+  // Glider Suit tunables. Every value has a range; anything outside it logs a
+  // [GliderSuit] warning and falls back to the default. "glider reload" re-reads
+  // this file without restarting the game.
+
+  // --- Activation and input ---
+  "fold_input_lockout_ms": 250,     // after opening, Jump cannot fold for this long
+  "reactivate_cooldown_ms": 400,    // after folding, before the wings can open again
+  "min_activate_height": 0.5,       // clear air (m) needed below the feet; 0.5 lets a standing jump open
+  "launch_speed": 12,               // 0-40 m/s: the first opening after leaving the ground tops the speed
+                                    // up to this, on the glide angle toward where you look; 0 = off
+
+  // --- Flight model ---
+  "cruise_speed": 25,               // speed (m/s) the glider settles at when trimmed
+  "glide_ratio": 12.0,              // metres forward per metre lost at cruise (12 = a 4.8 degree glide angle);
+                                    // 1.5-12
+  "stall_speed": 8,                 // below this the glider stalls
+  "stall_recover_speed": 11,        // speed at which control returns (must exceed stall_speed)
+  "stall_min_time": 0.6,            // shortest stall, seconds
+  "stall_dive_angle": 55,           // nose-down angle a stall forces, degrees
+  "stall_pitch_rate": 120,          // how fast the nose drops in a stall, deg/s
+  "stall_turn_factor": 0.3,         // Left/Right authority while stalled
+
+  "pitch_rate": 40,                 // Forward/Back nose rate, deg/s
+  "pitch_return_rate": 0,           // 0 = hold attitude; > 0 = drift back to trim at this rate
+  "open_trim_rate": 60,             // after opening, the nose eases to the glide angle at this rate, deg/s,
+                                    // until it gets there or you press Forward/Back; 0 = keep the direction of travel
+  "max_dive_angle": 70,             // steepest dive, degrees
+  "max_climb_angle": 30,            // steepest pull-up, degrees
+
+  "turn_rate": 55,                  // Left/Right, deg/s
+  "heading_follow_rate": 120,       // how fast the flight direction can follow the camera, deg/s
+  "turn_drag": 0.35,                // extra drag in a full-rate turn
+
+  "glide_gravity": 0,               // 0 = use the game's real gravity (recommended)
+  "ceiling_margin": 0.25,           // stay this far (m) below the takeoff height
+  "ceiling_soften_height": 2.0,     // height over which a climb flattens into the ceiling
+
+  // --- Crashes and fall damage ---
+  "crash_tangent_factor": 0.25,     // share of sliding speed counted in a crash
+  "crash_min_speed": 3,             // speed loss (m/s) in one step that counts as a hit
+  "crash_fold_speed": 6,            // wall hits at or above this fold the wings
+  "crash_damage_scale": 0.5,        // how hard a glider crash or landing counts: 0.5 = like hitting at half
+                                    // the speed, 1 = full vanilla fall damage, 0 = none. Folding the wings
+                                    // and falling is always full vanilla damage
+  "landing_grace_ms": 300,          // window in which the landing impact is the glider's, not vanilla's
+
+  // --- Wings, pose, camera ---
+  "unfold_time": 0.6,               // wing-open animation and lift ramp, seconds
+  "fold_time": 0.45,                // wing-close animation
+  "wing_bank_angle": 30,            // wing roll in a full turn, degrees
+  "camera_roll_angle": 8,           // camera roll in a full turn; 0 = off
+  "body_pitch_base": 65,            // how far forward the body tips in level flight, degrees.
+                                    // The wing model is built to be level at 65
+  "body_bank_angle": 25,            // third-person body roll in a full turn, degrees
+  "arm_level_factor": 1.0,          // how much the arms are levelled back for aiming
+
+  // --- Worn placement (tune with "glider reload") ---
+  "worn_offset": [0, 0, -0.09],     // where the harness hangs from the upper-spine bone, metres:
+                                    // right, up the spine, out of the chest (negative = toward the back)
+  "worn_rotation": [0, 0, 0],       // extra rotation in those same body axes, degrees
+  "worn_scale": 1.0,                // scale of the worn rig
+  "fp_wing_offset": [0, 1.95, 0.30],// first-person wings, metres from the player root (right,
+                                    // up, forward): where the leading edge meets the middle.
+                                    // The canvas trails back from there over your head.
+  "fp_wing_pitch": 0,               // extra first-person wing tilt, degrees, on top of the
+                                    // forward tilt the wings share with the third-person body
+                                    // (body_pitch_base); positive tips them further forward
+  "fp_wing_scale": 0.45,            // first-person wing size; 1 = full size (5.2 m span)
+  "fp_wings": true,                 // false hides the first-person wings
+
+  // --- Audio and debug ---
+  "wind_loop": true,                // play the wind loop while gliding
+  "wind_volume": 0.6,               // loop volume at cruise speed, nose at the glide angle
+  "wind_dive_boost": 0.7,           // 0-3: extra loudness at max_dive_angle (0.7 = 70% louder);
+                                    // the loop also rises in pitch as the nose goes down
+  "wind_climb_volume": 0.3,         // 0-1: share of the volume left at max_climb_angle;
+                                    // the loop also drops in pitch as the nose comes up
+  "wind_stall_volume": 0.1,         // 0-1: share of wind_volume heard at most while stalled
+  "sound_volume": 1.0,              // fold / unfold volume
+  "debug": true                     // verbose log and on-screen readout. On during testing;
+                                    // set back to false before a final release
+}

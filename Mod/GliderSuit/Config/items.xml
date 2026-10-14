@@ -1,0 +1,17 @@
+<configs>
+	<!-- T2 schematic: EconomicValue 1000 x the traders' buy_markup of 3 = 3000. -->
+	<append xpath="/items">
+		<item name="modArmorGliderSuitSchematic">
+			<property name="Extends" value="schematicNoQualityMaster"/>
+			<property name="CreativeMode" value="Player"/>
+			<property name="CustomIcon" value="modArmorGliderSuit"/>
+			<property name="Unlocks" value="modArmorGliderSuit"/>
+			<property name="EconomicValue" value="1000"/>
+			<property name="TraderStageTemplate" value="modsTier2"/>
+			<effect_group tiered="false">
+				<triggered_effect trigger="onSelfPrimaryActionEnd" action="ModifyCVar" cvar="modArmorGliderSuit" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfPrimaryActionEnd" action="GiveExp" exp="50"/>
+			</effect_group>
+		</item>
+	</append>
+</configs>

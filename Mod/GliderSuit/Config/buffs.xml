@@ -1,0 +1,18 @@
+<configs>
+	<!-- buffGliderSuitHarness: the glider mod is installed in the equipped chest
+	     armor (added/removed by the item modifier's equip triggers).
+	     buffGliderSuitActive: the wings are extended, kept through the landing
+	     grace. Both are hidden and permanent.
+	     Deliberately no guard on buffPlayerFallingDamage: unlike the Parachute,
+	     the glider must keep vanilla fall damage alive. -->
+	<append xpath="/buffs">
+		<buff name="buffGliderSuitHarness" hidden="true">
+			<stack_type value="ignore"/>
+			<duration value="0"/>
+		</buff>
+		<buff name="buffGliderSuitActive" hidden="true">
+			<stack_type value="ignore"/>
+			<duration value="0"/>
+		</buff>
+	</append>
+</configs>

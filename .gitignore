@@ -1,0 +1,24 @@
+# Build output
+bin/
+obj/
+build/
+dist/
+*.user
+build.log
+
+# Compiled mod binaries (the shipped Config/, Resources/ bundle and icon are tracked)
+Mod/GliderSuit/GliderSuit.dll
+Mod/GliderSuit/GliderSuit.pdb
+unity/*.log
+
+# Unity project (source assets are tracked, the import cache is not)
+unity/GliderSuitAssets/Library/
+unity/GliderSuitAssets/Temp/
+unity/GliderSuitAssets/Logs/
+unity/GliderSuitAssets/Obj/
+unity/GliderSuitAssets/Build/
+unity/GliderSuitAssets/UserSettings/
+
+# Local scratch output
+preview/
+debug.log

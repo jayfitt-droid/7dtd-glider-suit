@@ -1,0 +1,6 @@
+<configs>
+	<!-- Tier-2 mods and general schematics; the same pool as Impact Bracing. -->
+	<append xpath="/lootcontainers/lootgroup[@name='schematicsModsAndGeneralT2']">
+		<item name="modArmorGliderSuitSchematic"/>
+	</append>
+</configs>

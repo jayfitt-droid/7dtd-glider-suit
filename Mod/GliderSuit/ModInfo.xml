@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xml>
+	<Name value="GliderSuit" />
+	<DisplayName value="Glider Suit" />
+	<Description value="A chest-armor mod that unfolds into a homemade hang glider." />
+	<Author value="Jason" />
+	<Version value="0.5.0" />
+	<Website value="" />
+	<SkipWithAntiCheat value="true" />
+</xml>

@@ -1,0 +1,18 @@
+<configs>
+	<!-- modifier_tags="parachute" is deliberate: it is the Parachute mod's tag, so the two cannot share an outfit. -->
+	<append xpath="/item_modifiers">
+		<item_modifier name="modArmorGliderSuit" installable_tags="armorChest" modifier_tags="parachute" blocked_tags="noMods" type="attachment">
+			<property name="Extends" value="modGeneralMaster" param1="CustomIcon"/>
+			<property name="CustomIcon" value="modArmorGliderSuit"/>
+			<property name="DescriptionKey" value="modArmorGliderSuitDesc"/>
+			<property name="UnlockedBy" value="modArmorGliderSuitSchematic"/>
+			<property name="Material" value="Mcloth"/>
+			<property name="EconomicValue" value="1000"/>
+			<effect_group tiered="false">
+				<requirement name="IsEquipped"/>
+				<triggered_effect trigger="onSelfEquipStart" action="AddBuff" buff="buffGliderSuitHarness"/>
+				<triggered_effect trigger="onSelfEquipStop" action="RemoveBuff" buff="buffGliderSuitHarness"/>
+			</effect_group>
+		</item_modifier>
+	</append>
+</configs>
