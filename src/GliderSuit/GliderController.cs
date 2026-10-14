@@ -17,6 +17,11 @@ internal sealed class GliderController : MonoBehaviour
     private float nextDebugLog;
     private bool debugReadoutFailed;
     private bool ropeWasAttached;
+    // D35: this controller put the camera in third person, so folding puts it back.
+    private bool switchedToThirdPerson;
+    // D35: the view is decided once per glide, when the delay runs out, so a view
+    // the player picks after that is never overridden.
+    private bool viewDecided;
 
     internal static void Attach(EntityPlayerLocal entityPlayer)
     {
@@ -244,6 +249,8 @@ internal sealed class GliderController : MonoBehaviour
             }
         }
 
+        if (GliderState.IsActive) AutoThirdPerson(config);
+
         // D2: Left/Right steer the heading (and therefore the camera). The flight
         // path follows the camera over a moment, in GliderFlight.Step.
         if (GliderState.IsActive)
@@ -344,6 +351,7 @@ internal sealed class GliderController : MonoBehaviour
 
         GliderState.Phase = GliderPhase.Gliding;
         GliderState.PhaseStartTime = Time.time;
+        viewDecided = false;
         GliderState.StallStartTime = 0f;
         SyncFallAnimation();
         GliderAudio.PlayUnfold(player);
@@ -378,6 +386,39 @@ internal sealed class GliderController : MonoBehaviour
                 config.LaunchSpeed.ToString("F1") + " m/s.");
     }
 
+    /// <summary>
+    /// D35: after third_person_after_ms of gliding, switch to third person the way
+    /// the game does when a player gets into a vehicle. Nothing happens if the
+    /// player is already in third person or the world restricts the camera.
+    /// </summary>
+    private void AutoThirdPerson(GliderConfig config)
+    {
+        if (viewDecided || !config.AutoThirdPerson) return;
+        if (Time.time - GliderState.PhaseStartTime < config.ThirdPersonAfterMs / 1000f) return;
+        viewDecided = true;
+        if (!player.bFirstPersonView) return;
+        if (player.vp_FPCamera == null || player.vp_FPCamera.Locked3rdPerson) return;
+        if (GameStats.GetInt(EnumGameStats.CameraRestrictionMode) != 0) return;
+        player.SetFirstPersonView(false, true);
+        switchedToThirdPerson = true;
+        if (config.Debug) Log.Out("[GliderSuit] View: third person while gliding.");
+    }
+
+    /// <summary>
+    /// D35: back to the view the player last chose with the view key (the game's
+    /// own preference, as when leaving a vehicle). Not while dead: the death
+    /// camera and the respawn set the view themselves.
+    /// </summary>
+    private void RestoreView()
+    {
+        if (!switchedToThirdPerson) return;
+        switchedToThirdPerson = false;
+        if (player.IsDead()) return;
+        player.SwitchToPreferredCameraMode(true);
+        if (GliderMod.Settings.Debug)
+            Log.Out("[GliderSuit] View: back to " + (player.bFirstPersonView ? "first" : "third") + " person.");
+    }
+
     internal void Fold(string reason)
     {
         Fold(reason, GliderFlight.CurrentVelocity(player));
@@ -399,6 +440,7 @@ internal sealed class GliderController : MonoBehaviour
         if (reason != "landed" && reason != "rope") GliderFlight.HandBack(player, velocity);
 
         SyncFallAnimation();
+        RestoreView();
         GliderAudio.PlayFold(player);
         if (config.Debug)
             Log.Out("[GliderSuit] Wings folded (" + reason + ") at " + velocity.magnitude.ToString("F1") +

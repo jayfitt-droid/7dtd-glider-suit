@@ -39,6 +39,9 @@ tarp-and-tent-pole wings open on your back.
   rather than hinders, but hold it too long and you stall again.
 - With the **Grappling Hook** mod: attaching a rope folds the wings, and the rope
   takes over. Press Jump to let go, then press Jump again to open the wings.
+- Half a second after opening, the camera switches to third person, and folding
+  puts it back to the view you had chosen. Set `auto_third_person` to `false`
+  to stay in first person; `third_person_after_ms` sets the delay. Press the view key while gliding to change it as usual.
 - Weapons stay usable while gliding.
 
 The glider and the **Parachute** mod share a modifier tag, so only one of them

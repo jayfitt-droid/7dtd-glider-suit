@@ -5,6 +5,9 @@
 
   // --- Activation and input ---
   "fold_input_lockout_ms": 250,     // after opening, Jump cannot fold for this long
+  "auto_third_person": true,        // switch to third person while gliding and back to your chosen
+                                    // view on folding; false = stay in whichever view you are in
+  "third_person_after_ms": 500,     // 0-10000: how long after opening the switch happens; 0 = at once
   "reactivate_cooldown_ms": 400,    // after folding, before the wings can open again
   "min_activate_height": 0.5,       // clear air (m) needed below the feet; 0.5 lets a standing jump open
   "launch_speed": 12,               // 0-40 m/s: the first opening after leaving the ground tops the speed
@@ -50,8 +53,9 @@
   "fold_time": 0.45,                // wing-close animation
   "wing_bank_angle": 30,            // wing roll in a full turn, degrees
   "camera_roll_angle": 8,           // camera roll in a full turn; 0 = off
-  "body_pitch_base": 65,            // how far forward the body tips in level flight, degrees.
-                                    // The wing model is built to be level at 65
+  "body_pitch_base": 85,            // 0-90: how far forward the third-person body tips in level
+                                    // flight, degrees (90 = flat); half the flight pitch is added.
+                                    // The open wings are aimed separately and stay level
   "body_bank_angle": 25,            // third-person body roll in a full turn, degrees
   "arm_level_factor": 1.0,          // how much the arms are levelled back for aiming
 

@@ -44,13 +44,24 @@ internal static class GliderPose
     /// How far forward the torso is tipped, in degrees: body_pitch_base in level
     /// flight, further in a dive and less in a climb, by half the flight pitch.
     /// (Flight pitch is negative nose-down, hence the minus; it was a plus, which
-    /// stood the body up in a dive.) The wing model leans back from the spine by
-    /// 90 minus body_pitch_base, so this is also what lays the wings level, and the
-    /// first-person wings use the same angle.
+    /// stood the body up in a dive.) The open wings do not use it: they are aimed
+    /// in world space (D27), so the body can lie flatter than the wing model's
+    /// WingLevelPitch (D36).
     /// </summary>
     internal static float BodyPitch(GliderConfig config, float blend)
     {
         return (config.BodyPitchBase - 0.5f * GliderState.PitchDeg) * blend;
+    }
+
+    /// <summary>
+    /// The forward tip that lays the wing model level, following the flight pitch
+    /// by half like the body does. The first-person wings hang from the upright
+    /// player root and are tipped by this (D36; they used BodyPitch, which only
+    /// matched while body_pitch_base was 65).
+    /// </summary>
+    internal static float WingPitch(float blend)
+    {
+        return (WingLevelPitch - 0.5f * GliderState.PitchDeg) * blend;
     }
 
     /// <summary>Rotates every named bone that exists; false if none of them did.</summary>

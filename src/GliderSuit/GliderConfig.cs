@@ -12,6 +12,8 @@ using UnityEngine;
 internal sealed class GliderConfig
 {
     public int FoldInputLockoutMs = 250;
+    public bool AutoThirdPerson = true;
+    public int ThirdPersonAfterMs = 500;
     public int ReactivateCooldownMs = 400;
     public float MinActivateHeight = 0.5f;
     public float LaunchSpeed = 12f;
@@ -49,7 +51,7 @@ internal sealed class GliderConfig
     public float FoldTime = 0.45f;
     public float WingBankAngle = 30f;
     public float CameraRollAngle = 8f;
-    public float BodyPitchBase = 65f;
+    public float BodyPitchBase = 85f;
     public float BodyBankAngle = 25f;
     public float ArmLevelFactor = 1f;
 
@@ -88,6 +90,8 @@ internal sealed class GliderConfig
         {
             JObject data = JObject.Parse(File.ReadAllText(path));
             result.FoldInputLockoutMs = Integer(data, "fold_input_lockout_ms", 250, 0, 1000);
+            result.AutoThirdPerson = Boolean(data, "auto_third_person", true);
+            result.ThirdPersonAfterMs = Integer(data, "third_person_after_ms", 500, 0, 10000);
             result.ReactivateCooldownMs = Integer(data, "reactivate_cooldown_ms", 400, 0, 5000);
             result.MinActivateHeight = Number(data, "min_activate_height", 0.5f, 0f, 50f);
             result.LaunchSpeed = Number(data, "launch_speed", 12f, 0f, 40f);
@@ -125,7 +129,7 @@ internal sealed class GliderConfig
             result.FoldTime = Number(data, "fold_time", 0.45f, 0.05f, 3f);
             result.WingBankAngle = Number(data, "wing_bank_angle", 30f, 0f, 60f);
             result.CameraRollAngle = Number(data, "camera_roll_angle", 8f, 0f, 30f);
-            result.BodyPitchBase = Number(data, "body_pitch_base", 65f, 0f, 90f);
+            result.BodyPitchBase = Number(data, "body_pitch_base", 85f, 0f, 90f);
             result.BodyBankAngle = Number(data, "body_bank_angle", 25f, 0f, 60f);
             result.ArmLevelFactor = Number(data, "arm_level_factor", 1f, 0f, 1f);
 

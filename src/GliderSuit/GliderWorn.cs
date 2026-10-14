@@ -206,7 +206,7 @@ internal static class GliderWorn
             // turn. The camera already rolls with the turn; the wings roll with it
             // and only a little further, so they tilt on screen without covering it.
             firstPerson.Tick(config, GliderState.Speed, GliderState.Phase == GliderPhase.Stalled, fold,
-                config.CameraRollAngle + FirstPersonExtraBank, GliderPose.BodyPitch(config, fold));
+                config.CameraRollAngle + FirstPersonExtraBank, GliderPose.WingPitch(fold));
         }
     }
 
