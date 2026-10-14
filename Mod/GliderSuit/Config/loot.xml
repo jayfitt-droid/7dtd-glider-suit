@@ -1,6 +1,7 @@
 <configs>
-	<!-- Tier-2 mods and general schematics; the same pool as Impact Bracing. -->
-	<append xpath="/lootcontainers/lootgroup[@name='schematicsModsAndGeneralT2']">
+	<!-- Tier-1 mods and general schematics (D38): from loot stage 30 in common
+	     schematic loot, any stage in the rare schematic containers. -->
+	<append xpath="/lootcontainers/lootgroup[@name='schematicsModsAndGeneralT1']">
 		<item name="modArmorGliderSuitSchematic"/>
 	</append>
 </configs>

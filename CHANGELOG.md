@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.5.2 - 2026-10-14
+
+### Fixed
+
+- **No message when jumping without a glider.** Since one press in mid-air opens
+  the wings, every Jump press in the air without the mod installed showed
+  "Glider: no glider harness". It now does nothing.
+
+### Changed
+
+- **The schematic drops earlier.** It moved from the tier-2 to the tier-1
+  schematic loot group: the first chance is at loot stage 30 (was 88), full
+  at 68, and the rarer schematic containers can hold it at any stage. Traders
+  are unchanged (from trader stage 20).
+
 ## 0.5.1 - 2026-10-14
 
 ### Changed

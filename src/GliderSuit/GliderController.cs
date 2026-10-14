@@ -292,6 +292,12 @@ internal sealed class GliderController : MonoBehaviour
     private void Toggle()
     {
         if (Time.time < GliderState.RedeployReadyTime) return;
+        // Without a glider every Jump press in the air lands here (D31); say nothing.
+        if (!player.Buffs.HasBuff(HarnessBuff))
+        {
+            if (GliderMod.Settings.Debug) Log.Out("[GliderSuit] Open refused: no glider harness (silent)");
+            return;
+        }
         string blocked = ActivateBlockReason();
         if (blocked == null)
         {
