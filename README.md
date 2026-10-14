@@ -4,7 +4,7 @@ A chest-armor ("Outfit") modification for **7 Days to Die v3.3** that unfolds in
 a homemade hang glider. Press Jump in mid-air, and a harness and a pair of
 tarp-and-tent-pole wings open on your back.
 
-> **Status: 0.5.0, pre-release.** Flight, crashes, landings, folding, water,
+> **Status: 0.5.1, pre-release.** Flight, crashes, landings, folding, water,
 > ladders, weapons, dying in the air and the worn visuals have been tested in game
 > in single-player v3.3.0 (b18). The schematic's trader and loot entries are
 > confirmed in the running game but it has not yet been seen in a trader or a

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.1 - 2026-10-14
+
+### Changed
+
+- **Third person while gliding.** Half a second after the wings open the camera
+  switches to third person, and folding puts it back to the view you last chose
+  with the view key, the way vehicles do. Weapons still work. A view you pick
+  mid-glide is never overridden. Set `auto_third_person` to `false` to stay in
+  first person; `third_person_after_ms` (500) sets the delay.
+- **The body lies nearly flat in third person.** `body_pitch_base` is 85 (was
+  65), so in a normal glide the character is close to horizontal under the
+  wings. The open wings and the first-person wings look as before.
+
 ## 0.5.0 - 2026-10-14
 
 ### Changed
