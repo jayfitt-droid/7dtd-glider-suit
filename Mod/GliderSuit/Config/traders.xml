@@ -1,7 +1,11 @@
 <configs>
-	<!-- Only the schematic is sold (never the finished mod). Its TraderStageTemplate
-	     (modsTier2) decides when it starts to appear and its EconomicValue sets the
-	     price: 1000 x the traders' buy_markup of 3 = 3000 before any bartering perk. -->
+	<!-- The finished mod (D39) and its schematic are both sold. Each item's
+	     TraderStageTemplate (modsTier2) decides when it starts to appear, from trader
+	     stage 20, and its EconomicValue sets the price: 1000 x the traders'
+	     buy_markup of 3 = 3000 before any bartering perk. -->
+	<append xpath="/traders/trader_item_groups/trader_item_group[@name='groupArmorMods']">
+		<item name="modArmorGliderSuit"/>
+	</append>
 	<append xpath="/traders/trader_item_groups/trader_item_group[@name='schematicsModsCommon']">
 		<item name="modArmorGliderSuitSchematic"/>
 	</append>

@@ -4,7 +4,7 @@ A chest-armor ("Outfit") modification for **7 Days to Die v3.3** that unfolds in
 a homemade hang glider. Press Jump in mid-air, and a harness and a pair of
 tarp-and-tent-pole wings open on your back.
 
-> **Status: 0.5.2, pre-release.** Flight, crashes, landings, folding, water,
+> **Status: 0.5.3, pre-release.** Flight, crashes, landings, folding, water,
 > ladders, weapons, dying in the air and the worn visuals have been tested in game
 > in single-player v3.3.0 (b18). The schematic's trader entry is confirmed in
 > the running game but it has not yet been seen in a trader or a container (that
@@ -55,8 +55,9 @@ can be fitted in an outfit at a time.
 
 Get it in game with the workbench recipe (60 cloth, 8 metal pipe, 6 duct tape,
 10 leather, 1 sewing kit, 4 mechanical parts, 2 springs) after reading the
-schematic, or with the test commands below. Traders sell the schematic from
-trader stage 20 (about 3000 dukes). It is also in the tier-1 schematic loot,
+schematic, or with the test commands below. From trader stage 20, traders sell
+both the finished mod (in their armor-mod stock) and the schematic, each about
+3000 dukes before bartering perks. It is also in the tier-1 schematic loot,
 from loot stage 30 in ordinary schematic loot and at any stage in the rarer
 schematic containers.
 

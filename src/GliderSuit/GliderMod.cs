@@ -39,7 +39,7 @@ public sealed class ModApi : IModApi
 
 internal static class GliderMod
 {
-    internal const string Version = "0.5.2";
+    internal const string Version = "0.5.3";
     internal static string Directory = "";
     internal static GliderConfig Settings = new GliderConfig();
 

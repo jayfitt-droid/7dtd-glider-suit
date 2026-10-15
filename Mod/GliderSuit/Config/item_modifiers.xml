@@ -7,6 +7,7 @@
 			<property name="DescriptionKey" value="modArmorGliderSuitDesc"/>
 			<property name="UnlockedBy" value="modArmorGliderSuitSchematic"/>
 			<property name="Material" value="Mcloth"/>
+			<property name="TraderStageTemplate" value="modsTier2"/>
 			<property name="EconomicValue" value="1000"/>
 			<effect_group tiered="false">
 				<requirement name="IsEquipped"/>

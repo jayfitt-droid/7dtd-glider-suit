@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.3 - 2026-10-14
+
+### Changed
+
+- **Traders sell the finished Glider Suit mod.** It is in their armor-mod
+  stock from trader stage 20, at about 3000 dukes before bartering perks, as
+  well as the schematic. Before, only the schematic was sold, and it is one of
+  about 42 in its pool, so it could take dozens of restocks to appear.
+
 ## 0.5.2 - 2026-10-14
 
 ### Fixed
