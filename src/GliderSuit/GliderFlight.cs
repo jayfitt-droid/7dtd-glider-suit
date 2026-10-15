@@ -213,11 +213,15 @@ internal static class GliderFlight
         }
 
         // 4. Ceiling (R9): flatten a climb smoothly into the takeoff height.
+        //    takeoff_ceiling false (D41) leaves only the energy model to limit it.
         float y = controller != null ? WorldY(controller) : 0f;
         float room = GliderState.CeilingY - config.CeilingMargin - y;
-        if (room <= 0f) pitch = Mathf.Min(pitch, 0f);
-        else if (pitch > 0f)
-            pitch = Mathf.Min(pitch, config.MaxClimbAngle * Mathf.Clamp01(room / config.CeilingSoftenHeight));
+        if (config.TakeoffCeiling)
+        {
+            if (room <= 0f) pitch = Mathf.Min(pitch, 0f);
+            else if (pitch > 0f)
+                pitch = Mathf.Min(pitch, config.MaxClimbAngle * Mathf.Clamp01(room / config.CeilingSoftenHeight));
+        }
 
         // 5. Heading follows the camera (D2), limited so a mouse flick cannot
         //    reverse the flight path instantly.
@@ -242,7 +246,7 @@ internal static class GliderFlight
         float gamma = pitch * Mathf.Deg2Rad;
         Vector3 flat = new Vector3(Mathf.Sin(psi), 0f, Mathf.Cos(psi));
         Vector3 velocity = flat * (speed * Mathf.Cos(gamma)) + Vector3.up * (speed * Mathf.Sin(gamma));
-        if (y + velocity.y * deltaTime > GliderState.CeilingY) velocity.y = 0f;
+        if (config.TakeoffCeiling && y + velocity.y * deltaTime > GliderState.CeilingY) velocity.y = 0f;
 
         // 7. Lift ramp: from whatever the player arrived with to the model's
         //    velocity, eased, so the wings catch instead of snapping.

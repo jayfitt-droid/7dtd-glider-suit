@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.6.0 - 2026-10-15
+
+### Changed
+
+- **No more height limit.** You can now climb above the point you took off
+  from. Pulling up still trades speed for height, so hold Back too long and
+  you stall. Set the new `takeoff_ceiling` option to `true` to bring the old
+  limit back.
+
+## 0.5.4 - 2026-10-15
+
+### Changed
+
+- **A vehicle-style camera while gliding in third person.** Instead of the
+  game's close over-the-shoulder view, the camera sits centred behind you, like
+  on a bike or in a car, and pulls further back the faster you fly. The toolbar
+  and weapons work as before, and aiming down sights still uses the game's
+  close view. New config options: `glide_camera` (false for the old view),
+  `glide_camera_height`, `glide_camera_distance_min` and
+  `glide_camera_distance_max`.
+
 ## 0.5.3 - 2026-10-14
 
 ### Changed

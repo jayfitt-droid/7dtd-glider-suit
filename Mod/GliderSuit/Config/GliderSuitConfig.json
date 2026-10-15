@@ -8,6 +8,11 @@
   "auto_third_person": true,        // switch to third person while gliding and back to your chosen
                                     // view on folding; false = stay in whichever view you are in
   "third_person_after_ms": 500,     // 0-10000: how long after opening the switch happens; 0 = at once
+  "glide_camera": true,             // in third person while gliding, use a vehicle-style camera: centred
+                                    // behind you and further back; false = the game's over-the-shoulder view
+  "glide_camera_height": 1.8,       // 0-5 m: height above the feet the camera looks at (vehicles use 1.8)
+  "glide_camera_distance_min": 4,   // 1-20 m: camera distance when slow
+  "glide_camera_distance_max": 7,   // 1-20 m: camera distance at twice cruise speed (blended by speed)
   "reactivate_cooldown_ms": 400,    // after folding, before the wings can open again
   "min_activate_height": 0.5,       // clear air (m) needed below the feet; 0.5 lets a standing jump open
   "launch_speed": 12,               // 0-40 m/s: the first opening after leaving the ground tops the speed
@@ -36,6 +41,8 @@
   "turn_drag": 0.35,                // extra drag in a full-rate turn
 
   "glide_gravity": 0,               // 0 = use the game's real gravity (recommended)
+  "takeoff_ceiling": false,         // true = never climb above the takeoff height (the highest point since
+                                    // last on the ground); false = only speed limits a climb
   "ceiling_margin": 0.25,           // stay this far (m) below the takeoff height
   "ceiling_soften_height": 2.0,     // height over which a climb flattens into the ceiling
 

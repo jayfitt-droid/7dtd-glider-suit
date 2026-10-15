@@ -23,8 +23,10 @@ tarp-and-tent-pole wings open on your back.
   lose speed).
 - The glide is an **energy model**: speed comes only from losing height. Run out
   of speed and the glider **stalls and nosedives**; hold the nose a little below
-  level and it will not. The wings flatten out smoothly rather than letting you
-  climb: **you can never get above the height you took off from.**
+  level and it will not. Pulling up turns speed back into height, so a fast
+  dive can zoom you up a few metres above where you took off, but hold Back
+  too long and you stall. Set `takeoff_ceiling` to `true` to cap the glider at
+  its takeoff height instead.
 - Opening the wings eases you into the normal glide by itself; press Forward or
   Back and the nose is yours, and stays where you leave it. A key you were
   already holding when the wings opened (Forward from a running jump) does
@@ -42,6 +44,10 @@ tarp-and-tent-pole wings open on your back.
 - Half a second after opening, the camera switches to third person, and folding
   puts it back to the view you had chosen. Set `auto_third_person` to `false`
   to stay in first person; `third_person_after_ms` sets the delay. Press the view key while gliding to change it as usual.
+- In third person while gliding, the camera sits centred behind you like the
+  vehicle camera and pulls back as you speed up. Aiming down sights uses the
+  game's usual close view. Set `glide_camera` to `false` for the game's normal
+  third-person camera.
 - Weapons stay usable while gliding.
 
 The glider and the **Parachute** mod share a modifier tag, so only one of them

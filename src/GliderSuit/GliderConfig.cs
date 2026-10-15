@@ -14,6 +14,10 @@ internal sealed class GliderConfig
     public int FoldInputLockoutMs = 250;
     public bool AutoThirdPerson = true;
     public int ThirdPersonAfterMs = 500;
+    public bool GlideCamera = true;
+    public float GlideCameraHeight = 1.8f;
+    public float GlideCameraDistanceMin = 4f;
+    public float GlideCameraDistanceMax = 7f;
     public int ReactivateCooldownMs = 400;
     public float MinActivateHeight = 0.5f;
     public float LaunchSpeed = 12f;
@@ -38,6 +42,7 @@ internal sealed class GliderConfig
     public float TurnDrag = 0.35f;
 
     public float GlideGravity = 0f;
+    public bool TakeoffCeiling;
     public float CeilingMargin = 0.25f;
     public float CeilingSoftenHeight = 2f;
 
@@ -92,6 +97,10 @@ internal sealed class GliderConfig
             result.FoldInputLockoutMs = Integer(data, "fold_input_lockout_ms", 250, 0, 1000);
             result.AutoThirdPerson = Boolean(data, "auto_third_person", true);
             result.ThirdPersonAfterMs = Integer(data, "third_person_after_ms", 500, 0, 10000);
+            result.GlideCamera = Boolean(data, "glide_camera", true);
+            result.GlideCameraHeight = Number(data, "glide_camera_height", 1.8f, 0f, 5f);
+            result.GlideCameraDistanceMin = Number(data, "glide_camera_distance_min", 4f, 1f, 20f);
+            result.GlideCameraDistanceMax = Number(data, "glide_camera_distance_max", 7f, 1f, 20f);
             result.ReactivateCooldownMs = Integer(data, "reactivate_cooldown_ms", 400, 0, 5000);
             result.MinActivateHeight = Number(data, "min_activate_height", 0.5f, 0f, 50f);
             result.LaunchSpeed = Number(data, "launch_speed", 12f, 0f, 40f);
@@ -116,6 +125,7 @@ internal sealed class GliderConfig
             result.TurnDrag = Number(data, "turn_drag", 0.35f, 0f, 2f);
 
             result.GlideGravity = Number(data, "glide_gravity", 0f, 0f, 30f);
+            result.TakeoffCeiling = Boolean(data, "takeoff_ceiling", false);
             result.CeilingMargin = Number(data, "ceiling_margin", 0.25f, 0f, 5f);
             result.CeilingSoftenHeight = Number(data, "ceiling_soften_height", 2f, 0.1f, 10f);
 
