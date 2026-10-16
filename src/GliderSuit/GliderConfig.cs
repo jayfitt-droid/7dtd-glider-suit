@@ -72,8 +72,8 @@ internal sealed class GliderConfig
 
     public bool FoldSounds;
     public bool WindLoop = true;
-    public float WindVolume = 0.6f;
-    public float WindDiveBoost = 0.7f;
+    public float WindVolume = 0.5f;
+    public float WindDiveBoost = 0.6f;
     public float WindClimbVolume = 0.3f;
     public float WindStallVolume = 0.1f;
     public float SoundVolume = 1f;
@@ -154,8 +154,8 @@ internal sealed class GliderConfig
 
             result.FoldSounds = Boolean(data, "fold_sounds", false);
             result.WindLoop = Boolean(data, "wind_loop", true);
-            result.WindVolume = Number(data, "wind_volume", 0.6f, 0f, 1f);
-            result.WindDiveBoost = Number(data, "wind_dive_boost", 0.7f, 0f, 3f);
+            result.WindVolume = Number(data, "wind_volume", 0.5f, 0f, 1f);
+            result.WindDiveBoost = Number(data, "wind_dive_boost", 0.6f, 0f, 3f);
             result.WindClimbVolume = Number(data, "wind_climb_volume", 0.3f, 0f, 1f);
             result.WindStallVolume = Number(data, "wind_stall_volume", 0.1f, 0f, 1f);
             result.SoundVolume = Number(data, "sound_volume", 1f, 0f, 1f);

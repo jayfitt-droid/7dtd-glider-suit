@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.2 - 2026-10-15
+
+### Changed
+
+- **Quieter wind.** `wind_volume` 0.5 (was 0.6) and `wind_dive_boost` 0.6
+  (was 0.7).
+
 ## 0.6.1 - 2026-10-15
 
 ### Changed

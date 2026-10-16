@@ -86,8 +86,8 @@
   // --- Audio and debug ---
   "fold_sounds": false,             // true = play the open and fold sounds (they have a beeping buckle click)
   "wind_loop": true,                // play the wind loop while gliding
-  "wind_volume": 0.6,               // loop volume at cruise speed, nose at the glide angle
-  "wind_dive_boost": 0.7,           // 0-3: extra loudness at max_dive_angle (0.7 = 70% louder);
+  "wind_volume": 0.5,               // loop volume at cruise speed, nose at the glide angle
+  "wind_dive_boost": 0.6,           // 0-3: extra loudness at max_dive_angle (0.7 = 70% louder);
                                     // the loop also rises in pitch as the nose goes down
   "wind_climb_volume": 0.3,         // 0-1: share of the volume left at max_climb_angle;
                                     // the loop also drops in pitch as the nose comes up
