@@ -37,15 +37,16 @@ internal sealed class GliderConfig
     public float MaxDiveAngle = 70f;
     public float MaxClimbAngle = 30f;
 
-    public float TurnRate = 55f;
-    public float HeadingFollowRate = 120f;
-    public float TurnDrag = 0.35f;
+    public float TurnRate = 40f;
+    public float HeadingFollowRate = 60f;
+    public float TurnDrag = 0.6f;
 
     public float GlideGravity = 0f;
     public bool TakeoffCeiling;
     public float CeilingMargin = 0.25f;
     public float CeilingSoftenHeight = 2f;
 
+    public float FoldAirDrag = 0.004f;
     public float CrashTangentFactor = 0.25f;
     public float CrashMinSpeed = 3f;
     public float CrashFoldSpeed = 6f;
@@ -54,10 +55,9 @@ internal sealed class GliderConfig
 
     public float UnfoldTime = 0.6f;
     public float FoldTime = 0.45f;
-    public float WingBankAngle = 30f;
     public float CameraRollAngle = 8f;
     public float BodyPitchBase = 85f;
-    public float BodyBankAngle = 25f;
+    public float BodyBankAngle = 30f;
     public float ArmLevelFactor = 1f;
 
     public Vector3 WornOffset = new Vector3(0f, 0f, -0.09f);
@@ -70,6 +70,7 @@ internal sealed class GliderConfig
     public float FpWingScale = 0.45f;
     public bool FpWings = true;
 
+    public bool FoldSounds;
     public bool WindLoop = true;
     public float WindVolume = 0.6f;
     public float WindDiveBoost = 0.7f;
@@ -120,15 +121,16 @@ internal sealed class GliderConfig
             result.MaxDiveAngle = Number(data, "max_dive_angle", 70f, 20f, 89f);
             result.MaxClimbAngle = Number(data, "max_climb_angle", 30f, 0f, 60f);
 
-            result.TurnRate = Number(data, "turn_rate", 55f, 10f, 180f);
-            result.HeadingFollowRate = Number(data, "heading_follow_rate", 120f, 30f, 720f);
-            result.TurnDrag = Number(data, "turn_drag", 0.35f, 0f, 2f);
+            result.TurnRate = Number(data, "turn_rate", 40f, 10f, 180f);
+            result.HeadingFollowRate = Number(data, "heading_follow_rate", 60f, 30f, 720f);
+            result.TurnDrag = Number(data, "turn_drag", 0.6f, 0f, 2f);
 
             result.GlideGravity = Number(data, "glide_gravity", 0f, 0f, 30f);
             result.TakeoffCeiling = Boolean(data, "takeoff_ceiling", false);
             result.CeilingMargin = Number(data, "ceiling_margin", 0.25f, 0f, 5f);
             result.CeilingSoftenHeight = Number(data, "ceiling_soften_height", 2f, 0.1f, 10f);
 
+            result.FoldAirDrag = Number(data, "fold_air_drag", 0.004f, 0f, 1f);
             result.CrashTangentFactor = Number(data, "crash_tangent_factor", 0.25f, 0f, 1f);
             result.CrashMinSpeed = Number(data, "crash_min_speed", 3f, 0.5f, 20f);
             result.CrashFoldSpeed = Number(data, "crash_fold_speed", 6f, 1f, 40f);
@@ -137,10 +139,9 @@ internal sealed class GliderConfig
 
             result.UnfoldTime = Number(data, "unfold_time", 0.6f, 0.1f, 3f);
             result.FoldTime = Number(data, "fold_time", 0.45f, 0.05f, 3f);
-            result.WingBankAngle = Number(data, "wing_bank_angle", 30f, 0f, 60f);
             result.CameraRollAngle = Number(data, "camera_roll_angle", 8f, 0f, 30f);
             result.BodyPitchBase = Number(data, "body_pitch_base", 85f, 0f, 90f);
-            result.BodyBankAngle = Number(data, "body_bank_angle", 25f, 0f, 60f);
+            result.BodyBankAngle = Number(data, "body_bank_angle", 30f, 0f, 60f);
             result.ArmLevelFactor = Number(data, "arm_level_factor", 1f, 0f, 1f);
 
             result.WornOffset = Vector(data, "worn_offset", result.WornOffset, -5f, 5f);
@@ -151,6 +152,7 @@ internal sealed class GliderConfig
             result.FpWingScale = Number(data, "fp_wing_scale", 0.45f, 0.1f, 2f);
             result.FpWings = Boolean(data, "fp_wings", true);
 
+            result.FoldSounds = Boolean(data, "fold_sounds", false);
             result.WindLoop = Boolean(data, "wind_loop", true);
             result.WindVolume = Number(data, "wind_volume", 0.6f, 0f, 1f);
             result.WindDiveBoost = Number(data, "wind_dive_boost", 0.7f, 0f, 3f);

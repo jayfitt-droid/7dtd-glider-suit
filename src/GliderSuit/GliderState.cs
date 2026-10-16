@@ -52,6 +52,17 @@ internal static class GliderState
     internal static Vector3 StepPosBefore;
     internal static Vector3 StepIntended;
 
+    /// <summary>
+    /// D42: horizontal velocity (m/s) carried on after the wings fold in the air.
+    /// The game damps sideways air movement to almost nothing in about 0.3 s, so
+    /// without this a fold dropped the player straight down. Added to the
+    /// controller's throttle for each step by the FixedMove prefix, and taken off
+    /// again by the postfix, so the game's damping never touches it.
+    /// </summary>
+    internal static Vector3 CarryVelocity;
+    internal static Vector3 CarryThrottle;
+    internal static bool StepCarry;
+
     /// <summary>0 = fully folded, 1 = fully extended. Visual only (§5.6).</summary>
     internal static float FoldFraction;
 
@@ -98,6 +109,9 @@ internal static class GliderState
         // the climb test fires PlayerSpawnedInWorld, which resets this state. It is
         // cleared when it fires and when the world shuts down.
         InitialVelocity = Vector3.zero;
+        CarryVelocity = Vector3.zero;
+        CarryThrottle = Vector3.zero;
+        StepCarry = false;
         LastTurn = 0f;
         StepActive = false;
         StepPosBefore = Vector3.zero;

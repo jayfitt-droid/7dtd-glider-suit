@@ -32,7 +32,10 @@ internal static class GliderPose
         float bodyPitch = BodyPitch(config, blend);
         float bank = config.BodyBankAngle * GliderState.Bank * blend;
 
-        Rotate(model.boneCatalog, "Hips", Quaternion.AngleAxis(bodyPitch, right) * Quaternion.AngleAxis(-bank, player.transform.forward));
+        // Bank after tipping (D43): the roll is about the flight direction, so the
+        // lying body rolls with the wings. Rolling first, about the upright body's
+        // forward axis, turned into a twist about the vertical once tipped 85°.
+        Rotate(model.boneCatalog, "Hips", Quaternion.AngleAxis(-bank, player.transform.forward) * Quaternion.AngleAxis(bodyPitch, right));
 
         Quaternion level = Quaternion.AngleAxis(-bodyPitch * config.ArmLevelFactor, right);
         if (!RotateAll(model.boneCatalog, ShoulderBones, level))

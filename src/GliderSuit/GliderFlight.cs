@@ -286,7 +286,11 @@ internal static class GliderFlight
         float timeScale = Mathf.Max(0.0001f, Time.timeScale);
         float deltaTime = Time.fixedDeltaTime;
 
-        // m_MotorThrottle x/z are left as last written; vanilla damping bleeds them off.
+        // The horizontal motion is carried on by the FixedMove patch (D42); the
+        // throttle the glider last wrote would be damped away and must not add to it.
+        controller.m_MotorThrottle.x = 0f;
+        controller.m_MotorThrottle.z = 0f;
+        GliderState.CarryVelocity = new Vector3(velocity.x, 0f, velocity.z);
         controller.m_FallSpeed = velocity.y / (VpStepsPerSecondFactor * timeScale);
         controller.m_MaxHeight = WorldY(controller);
         controller.m_MaxHeightInitialFallSpeed =

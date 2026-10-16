@@ -16,7 +16,8 @@ internal static class GliderAudio
 
     internal static void PlayUnfold(EntityPlayerLocal player)
     {
-        if (player == null) return;
+        // D45: off by default; the buckle click in the generated clips beeps.
+        if (player == null || !GliderMod.Settings.FoldSounds) return;
         GliderConfig config = GliderMod.Settings;
         AudioClip clip = GliderAssets.UnfoldClip;
         if (clip != null)
@@ -38,7 +39,7 @@ internal static class GliderAudio
 
     internal static void PlayFold(EntityPlayerLocal player)
     {
-        if (player == null) return;
+        if (player == null || !GliderMod.Settings.FoldSounds) return;
         AudioClip clip = GliderAssets.FoldClip;
         if (clip == null)
         {

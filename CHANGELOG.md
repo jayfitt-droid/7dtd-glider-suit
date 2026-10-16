@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.6.1 - 2026-10-15
+
+### Changed
+
+- **Folding keeps your momentum.** Fold the wings in the air and you carry on
+  forward in an arc, slowed gently by the air, instead of dropping straight
+  down. Hitting a wall while carrying that speed hurts like a crash. The new
+  `fold_air_drag` option sets how quickly it fades.
+- **The body banks with the wings.** In third person the body and the wings
+  now roll into a turn together. `body_bank_angle` sets both;
+  `wing_bank_angle` is gone.
+- **Heavier turning.** `turn_rate` 40 (was 55), `heading_follow_rate` 60 (was
+  120), `turn_drag` 0.6 (was 0.35).
+- **No open and fold sounds.** They had a beeping buckle click. Set the new
+  `fold_sounds` option to `true` to hear them again. The wind sound is
+  unchanged.
+
 ## 0.6.0 - 2026-10-15
 
 ### Changed

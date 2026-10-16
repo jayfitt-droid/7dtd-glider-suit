@@ -95,12 +95,13 @@ internal static class GliderWorn
     /// The attitude the rig would have if the body were simply tipped forward into
     /// the flying pose, facing where the player faces: the wing model leans back from
     /// the spine by 90 minus WingLevelPitch, so tipping the rig WingLevelPitch forward
-    /// lays the wings level. They follow the flight pitch by half and bank in turns.
+    /// lays the wings level. They follow the flight pitch by half and bank in turns
+    /// by the same angle as the body (D43), so the two roll together.
     /// </summary>
     private static Quaternion FlightRotation(EntityPlayerLocal player, GliderConfig config)
     {
         float pitch = GliderPose.WingLevelPitch - 0.5f * GliderState.PitchDeg;
-        float bank = -config.WingBankAngle * GliderState.Bank;
+        float bank = -config.BodyBankAngle * GliderState.Bank;
         return player.transform.rotation *
             Quaternion.AngleAxis(bank, Vector3.forward) *
             Quaternion.Euler(pitch, 0f, 0f);

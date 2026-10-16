@@ -337,6 +337,7 @@ internal sealed class GliderController : MonoBehaviour
         Vector3 v0 = GliderFlight.CurrentVelocity(player);
         float horizontal = new Vector2(v0.x, v0.z).magnitude;
         GliderState.InitialVelocity = v0;
+        GliderState.CarryVelocity = Vector3.zero;
         GliderState.Speed = v0.magnitude;
         // Start along the real direction of travel (a straight drop is a dive, not
         // level flight); GliderFlight.Step then eases the nose to the glide angle.

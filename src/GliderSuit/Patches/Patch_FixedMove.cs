@@ -21,7 +21,11 @@ internal static class Patch_FixedMove
         GliderFlight.UpdateCeiling(__instance);
         GliderState.StepActive = false;
 
-        if (!GliderState.IsActive) return true;
+        if (!GliderState.IsActive)
+        {
+            CarryPrefix(__instance, local);
+            return true;
+        }
         if (__instance.MotorFreeFly)
         {
             GliderController.FoldActive("fly");
@@ -67,6 +71,7 @@ internal static class Patch_FixedMove
     [HarmonyPatch("FixedMove")]
     private static void Postfix(vp_FPController __instance)
     {
+        if (GliderState.StepCarry) CarryPostfix(__instance);
         if (!GliderState.StepActive) return;
         GliderState.StepActive = false;
 
@@ -153,6 +158,85 @@ internal static class Patch_FixedMove
             }
         }
         return false;
+    }
+
+    /// <summary>
+    /// D42: after a fold in the air the player keeps moving the way they were
+    /// flying, slowed only by air drag (fold_air_drag x speed squared), until they
+    /// touch the ground, a wall takes it, or anything else takes over the movement.
+    /// The player's own air control works on top of it as usual.
+    /// </summary>
+    private static void CarryPrefix(vp_FPController controller, EntityPlayerLocal player)
+    {
+        GliderState.StepCarry = false;
+        Vector3 carry = GliderState.CarryVelocity;
+        if (carry == Vector3.zero) return;
+
+        string stop = null;
+        if (controller.m_Grounded || player.onGround) stop = "ground";
+        else if (player.IsInWater() || player.IsSwimming()) stop = "water";
+        else if (player.isLadderAttached) stop = "ladder";
+        else if (player.AttachedToEntity != null || controller.MotorFreeFly || GliderRope.Attached) stop = "taken over";
+        else if (player.IsDead()) stop = "death";
+        float deltaTime = Time.fixedDeltaTime;
+        if (stop == null)
+        {
+            float speed = carry.magnitude;
+            speed = Mathf.Max(0f, speed - GliderMod.Settings.FoldAirDrag * speed * speed * deltaTime);
+            carry = speed > 0.5f ? carry.normalized * speed : Vector3.zero;
+            if (carry == Vector3.zero) stop = "slowed";
+        }
+        if (stop != null)
+        {
+            if (GliderMod.Settings.Debug)
+                Log.Out("[GliderSuit] momentum ends (" + stop + ") at " + GliderState.CarryVelocity.magnitude.ToString("F1") + " m/s.");
+            GliderState.CarryVelocity = Vector3.zero;
+            return;
+        }
+        GliderState.CarryVelocity = carry;
+
+        float timeScale = Mathf.Max(0.0001f, Time.timeScale);
+        float speedModifier = Mathf.Max(0.01f, controller.m_SpeedModifier);
+        GliderState.CarryThrottle = carry / (GliderFlight.VpStepsPerSecondFactor * timeScale * speedModifier);
+        controller.m_MotorThrottle += GliderState.CarryThrottle;
+        GliderState.StepPosBefore = controller.Transform.position;
+        GliderState.StepIntended = carry;
+        GliderState.StepCarry = true;
+    }
+
+    /// <summary>
+    /// Takes the carried motion back off the throttle, and drops the part of it a
+    /// wall stopped. A wall hit hard enough is charged like a glider crash, at full
+    /// rate since the wings are folded, so folding just before a wall saves nothing.
+    /// </summary>
+    private static void CarryPostfix(vp_FPController controller)
+    {
+        GliderState.StepCarry = false;
+        controller.m_MotorThrottle -= GliderState.CarryThrottle;
+        GliderState.CarryThrottle = Vector3.zero;
+
+        float deltaTime = Time.fixedDeltaTime;
+        if (deltaTime <= 0f) return;
+        Vector3 actual = (controller.Transform.position - GliderState.StepPosBefore) / deltaTime;
+        actual.y = 0f;
+        Vector3 carry = GliderState.CarryVelocity;
+        float along = carry.magnitude;
+        if (along < 0.01f) return;
+        // Only the carried direction is judged: the player's own air control is small.
+        float kept = Vector3.Dot(actual, carry / along);
+        float lost = along - Mathf.Max(0f, kept);
+        GliderConfig config = GliderMod.Settings;
+        if (lost <= config.CrashMinSpeed) return;
+
+        EntityPlayerLocal player = controller.localPlayer;
+        if (player != null && !LadderAhead(player, controller, carry / along))
+        {
+            float impact = GliderFlight.Impact(lost);
+            player.FallImpact(impact);
+            if (config.Debug)
+                Log.Out("[GliderSuit] momentum hit a wall at " + lost.ToString("F1") + " m/s -> impact " + impact.ToString("F3"));
+        }
+        GliderState.CarryVelocity = Vector3.zero;
     }
 
     /// <summary>How far ahead of the player, in metres, a ladder block still counts as grabbed.</summary>

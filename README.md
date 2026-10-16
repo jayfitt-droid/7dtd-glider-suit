@@ -35,7 +35,9 @@ tarp-and-tent-pole wings open on your back.
   through the game's own fall-damage rules, so parkour, Impact Bracing and boots
   all still apply. A hit while gliding counts at half its speed
   (`crash_damage_scale`), so damage starts at about cruise speed. Folding the
-  wings in mid-air hands you back to a normal fall with full fall damage.
+  wings in mid-air hands you back to a normal fall with full fall damage; you
+  keep your forward speed, slowed gently by the air (`fold_air_drag`), and a
+  wall hit at that speed hurts at the full rate.
 - Flying onto a ladder folds the wings and costs nothing.
 - A stall recovers into a glide by itself once speed returns; pulling Back helps
   rather than hinders, but hold it too long and you stall again.
