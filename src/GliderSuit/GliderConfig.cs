@@ -79,22 +79,42 @@ internal sealed class GliderConfig
     public float SoundVolume = 1f;
     public bool Debug;
 
+    /// <summary>True when GliderSuitDev.json was found and read.</summary>
+    public bool DevFile;
+
     public float FoldInputLockoutSeconds => FoldInputLockoutMs / 1000f;
     public float ReactivateCooldownSeconds => ReactivateCooldownMs / 1000f;
     public float LandingGraceSeconds => LandingGraceMs / 1000f;
 
+    internal const string PlayerFileName = "GliderSuitConfig.json";
+
+    /// <summary>
+    /// Jason's tuning file (2026-10-27): every option, read after the player file
+    /// and winning over it. It is not shipped (package.ps1 leaves it out), so
+    /// players see only the short player file, and every option they do not have
+    /// takes the default written in this class.
+    /// </summary>
+    internal const string DevFileName = "GliderSuitDev.json";
+
     public static GliderConfig Load(string modDirectory)
     {
         var result = new GliderConfig();
-        string path = Path.Combine(modDirectory, "Config", "GliderSuitConfig.json");
-        if (!File.Exists(path))
-        {
-            Log.Warning("[GliderSuit] Config missing; using defaults: " + path);
-            return result;
-        }
+        string path = Path.Combine(modDirectory, "Config", PlayerFileName);
+        string devPath = Path.Combine(modDirectory, "Config", DevFileName);
+        bool hasPlayer = File.Exists(path);
+        bool hasDev = File.Exists(devPath);
+        if (!hasPlayer) Log.Warning("[GliderSuit] Config missing; using defaults: " + path);
+        if (!hasPlayer && !hasDev) return result;
         try
         {
-            JObject data = JObject.Parse(File.ReadAllText(path));
+            JObject data = hasPlayer ? JObject.Parse(File.ReadAllText(path)) : new JObject();
+            if (hasDev)
+            {
+                JObject dev = JObject.Parse(File.ReadAllText(devPath));
+                foreach (JProperty property in dev.Properties()) data[property.Name] = property.Value;
+                Log.Out("[GliderSuit] Dev options: " + dev.Count + " values from " + devPath);
+                result.DevFile = true;
+            }
             result.FoldInputLockoutMs = Integer(data, "fold_input_lockout_ms", 250, 0, 1000);
             result.AutoThirdPerson = Boolean(data, "auto_third_person", true);
             result.ThirdPersonAfterMs = Integer(data, "third_person_after_ms", 500, 0, 10000);
@@ -160,7 +180,7 @@ internal sealed class GliderConfig
             result.WindStallVolume = Number(data, "wind_stall_volume", 0.1f, 0f, 1f);
             result.SoundVolume = Number(data, "sound_volume", 1f, 0f, 1f);
             result.Debug = Boolean(data, "debug", false);
-            Log.Out("[GliderSuit] Config loaded from " + path);
+            if (hasPlayer) Log.Out("[GliderSuit] Config loaded from " + path);
         }
         catch (Exception ex)
         {

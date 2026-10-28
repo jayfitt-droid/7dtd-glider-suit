@@ -17,6 +17,9 @@ internal static class GliderFlight
     /// <summary>The vanilla fall-impact factor (§3.2).</summary>
     internal const float VanillaImpactFactor = 0.86775f;
 
+    /// <summary>Time constant, seconds, of the filter on the turn rate the bank follows.</summary>
+    private const float BankRateSmoothing = 0.15f;
+
     /// <summary>
     /// Reading the controller's gravity back gives the acceleration the player
     /// was actually falling under when they opened the wings. Using it keeps
@@ -231,7 +234,13 @@ internal static class GliderFlight
             -config.HeadingFollowRate * deltaTime, config.HeadingFollowRate * deltaTime);
         heading = Mathf.Repeat(heading + applied, 360f);
         float headingRate = deltaTime > 0f ? applied / deltaTime : 0f;
-        float bankTarget = Mathf.Clamp(headingRate / Mathf.Max(1f, config.HeadingFollowRate), -1f, 1f);
+        // The view turns once per rendered frame (keys and mouse alike), but this
+        // runs once per fixed step, so a step sees 0, 1 or 2 frames of turning and
+        // the raw rate jumps about from step to step. Banking on it straight made
+        // the wings and body flutter in every turn. Smooth it first.
+        float smoothing = 1f - Mathf.Exp(-deltaTime / BankRateSmoothing);
+        GliderState.HeadingRate = Mathf.Lerp(GliderState.HeadingRate, headingRate, smoothing);
+        float bankTarget = Mathf.Clamp(GliderState.HeadingRate / Mathf.Max(1f, config.HeadingFollowRate), -1f, 1f);
         GliderState.Bank = Mathf.MoveTowards(GliderState.Bank, bankTarget, 4f * deltaTime);
 
         // 6. Speed: only losing height buys speed, drag always takes some.

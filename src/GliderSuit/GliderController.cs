@@ -22,6 +22,8 @@ internal sealed class GliderController : MonoBehaviour
     // D35: the view is decided once per glide, when the delay runs out, so a view
     // the player picks after that is never overridden.
     private bool viewDecided;
+    // The "switch back waits" line is logged once per wait, not every frame.
+    private bool restoreWaitLogged;
 
     internal static void Attach(EntityPlayerLocal entityPlayer)
     {
@@ -52,6 +54,7 @@ internal sealed class GliderController : MonoBehaviour
         }
         GliderAudio.Reset();
         GliderWorn.Destroy();
+        GliderRemote.Clear();
         Patch_Camera.Reset();
         GliderState.Reset();
         GliderState.ClimbTestOpenAt = 0f;
@@ -101,6 +104,7 @@ internal sealed class GliderController : MonoBehaviour
             // space on top of where the bones end up.
             GliderPose.LateUpdate(player, GliderMod.Settings);
             GliderWorn.Tick(player, GliderMod.Settings);
+            GliderRemote.LateTick(GliderMod.Settings);
         }
         catch (Exception ex)
         {
@@ -120,6 +124,7 @@ internal sealed class GliderController : MonoBehaviour
         {
             LogGravityOnce();
             Tick();
+            GliderRemote.Tick(player, GliderMod.Settings);
             TickDebugLog(GliderMod.Settings);
         }
         catch (Exception ex)
@@ -149,6 +154,8 @@ internal sealed class GliderController : MonoBehaviour
         if (player.IsDead() || GameManager.Instance == null || GameManager.Instance.World == null)
         {
             if (GliderState.IsActive) Fold("gone");
+            // The death camera and the respawn set the view themselves.
+            if (player.IsDead()) switchedToThirdPerson = false;
             // The rest of the tick is skipped while dead, so fade the wind out here.
             GliderAudio.Tick(player, config);
             return;
@@ -201,11 +208,21 @@ internal sealed class GliderController : MonoBehaviour
             if (reason != null) Fold(reason);
         }
 
+        // A switch back that had to wait for the player to stop aiming.
+        if (!GliderState.IsActive && switchedToThirdPerson) RestoreView();
+
         // Keep buffGliderSuitActive present while active and through the landing grace.
         bool wantBuff = GliderState.IsActive || GliderState.InGrace;
-        bool hasBuff = player.Buffs.HasBuff(ActiveBuff);
-        if (wantBuff && !hasBuff) AddActiveBuff();
-        else if (!wantBuff && hasBuff) player.Buffs.RemoveBuff(ActiveBuff, -1, true);
+        bool hasBuff = GliderEquip.HasLiveBuff(player, ActiveBuff);
+        if (wantBuff && !hasBuff) AddBuff(ActiveBuff);
+        else if (!wantBuff && hasBuff) player.Buffs.RemoveBuff(ActiveBuff, player.entityId, true);
+
+        // Multiplayer (D47): other players' games draw the open wings from this one.
+        // The owner is the instigator, so the server does not echo it back.
+        bool open = GliderState.IsActive;
+        bool hasOpen = GliderEquip.HasLiveBuff(player, OpenBuff);
+        if (open && !hasOpen) AddBuff(OpenBuff);
+        else if (!open && hasOpen) player.Buffs.RemoveBuff(OpenBuff, player.entityId, true);
 
         PlayerActionsLocal input = player.playerInput;
         bool airborne = !Grounded();
@@ -350,6 +367,7 @@ internal sealed class GliderController : MonoBehaviour
             ? Mathf.Repeat(Mathf.Atan2(v0.x, v0.z) * Mathf.Rad2Deg, 360f)
             : Mathf.Repeat(GliderFlight.LookYaw(player), 360f);
         GliderState.Bank = 0f;
+        GliderState.HeadingRate = 0f;
         if (GliderState.LaunchKickReady) LaunchKick(player, config);
         GliderState.LaunchKickReady = false;
         GliderFlight.LatchHeldInput(player.playerInput);
@@ -396,12 +414,14 @@ internal sealed class GliderController : MonoBehaviour
     /// <summary>
     /// D35: after third_person_after_ms of gliding, switch to third person the way
     /// the game does when a player gets into a vehicle. Nothing happens if the
-    /// player is already in third person or the world restricts the camera.
+    /// player is already in third person or the world restricts the camera. While
+    /// the player is aiming it waits until they stop.
     /// </summary>
     private void AutoThirdPerson(GliderConfig config)
     {
         if (viewDecided || !config.AutoThirdPerson) return;
         if (Time.time - GliderState.PhaseStartTime < config.ThirdPersonAfterMs / 1000f) return;
+        if (ViewSwitchBlocked()) return;
         viewDecided = true;
         if (!player.bFirstPersonView) return;
         if (player.vp_FPCamera == null || player.vp_FPCamera.Locked3rdPerson) return;
@@ -412,15 +432,42 @@ internal sealed class GliderController : MonoBehaviour
     }
 
     /// <summary>
+    /// Changing the view while aiming swaps the weapon between its first- and
+    /// third-person models mid-zoom and leaves the zoom stuck on after the player
+    /// lets go. The game avoids it too: its view key does nothing while an item
+    /// action runs, and a vehicle clears AimingGun before its camera takes over.
+    /// The zoom action only counts as running for its first 0.3 s, so AimingGun is
+    /// checked as well.
+    /// </summary>
+    private bool ViewSwitchBlocked()
+    {
+        if (player.AimingGun) return true;
+        return player.inventory != null && player.inventory.IsHoldingItemActionRunning();
+    }
+
+    /// <summary>
     /// D35: back to the view the player last chose with the view key (the game's
     /// own preference, as when leaving a vehicle). Not while dead: the death
-    /// camera and the respawn set the view themselves.
+    /// camera and the respawn set the view themselves. While the player is aiming
+    /// it waits: Tick calls this again every frame until the switch happens.
     /// </summary>
     private void RestoreView()
     {
         if (!switchedToThirdPerson) return;
+        if (player.IsDead())
+        {
+            switchedToThirdPerson = false;
+            return;
+        }
+        if (ViewSwitchBlocked())
+        {
+            if (GliderMod.Settings.Debug && !restoreWaitLogged)
+                Log.Out("[GliderSuit] View: switch back waits until you stop aiming.");
+            restoreWaitLogged = true;
+            return;
+        }
         switchedToThirdPerson = false;
-        if (player.IsDead()) return;
+        restoreWaitLogged = false;
         player.SwitchToPreferredCameraMode(true);
         if (GliderMod.Settings.Debug)
             Log.Out("[GliderSuit] View: back to " + (player.bFirstPersonView ? "first" : "third") + " person.");
@@ -440,6 +487,7 @@ internal sealed class GliderController : MonoBehaviour
         GliderState.LastFoldReason = reason;
         GliderState.RedeployReadyTime = Time.time + config.ReactivateCooldownSeconds;
         GliderState.Bank = 0f;
+        GliderState.HeadingRate = 0f;
 
         // A landing keeps the impact the postfix just armed; every other fold
         // hands the motion back so vanilla falling resumes (§5.2).
@@ -477,11 +525,11 @@ internal sealed class GliderController : MonoBehaviour
         return null;
     }
 
-    private void AddActiveBuff()
+    private void AddBuff(string name)
     {
-        EntityBuffs.BuffStatus status = player.Buffs.AddBuff(ActiveBuff, -1, true);
+        EntityBuffs.BuffStatus status = player.Buffs.AddBuff(name, player.entityId, true);
         if (status != EntityBuffs.BuffStatus.Added)
-            Log.Warning("[GliderSuit] Could not add " + ActiveBuff + ": " + status);
+            Log.Warning("[GliderSuit] Could not add " + name + ": " + status);
     }
 
     private bool Grounded()
@@ -576,6 +624,7 @@ internal sealed class GliderController : MonoBehaviour
 
     internal const string HarnessBuff = "buffGliderSuitHarness";
     internal const string ActiveBuff = "buffGliderSuitActive";
+    internal const string OpenBuff = "buffGliderSuitOpen";
 
     /// <summary>The same layer mask vp_FPController uses for its ground sphere cast.</summary>
     private const int GroundMask = 1084850184;

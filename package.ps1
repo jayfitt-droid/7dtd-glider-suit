@@ -4,6 +4,9 @@
 #   powershell -ExecutionPolicy Bypass -File package.ps1
 # The art (asset bundle and icon) is taken as it is in Mod\GliderSuit; rebuild
 # it in Unity first if the model, textures or sound changed (see README.md).
+# -AllowDebug packs a test build with "debug": true; a release must not have it.
+param([switch]$AllowDebug)
+
 $ErrorActionPreference = 'Stop'
 $repoRoot = $PSScriptRoot
 $modSource = Join-Path $repoRoot 'Mod\GliderSuit'
@@ -39,6 +42,13 @@ if ($modBinary.LastWriteTime -lt $buildStart.AddSeconds(-5)) {
     throw "GliderSuit.dll in Mod\GliderSuit was not refreshed by this build: $($modBinary.LastWriteTime)"
 }
 
+# Jason, 2026-10-27: debug must be false in any release. Test zips pass -AllowDebug.
+$configText = Get-Content -LiteralPath (Join-Path $modSource 'Config\GliderSuitConfig.json') -Raw
+if ($configText -match '"debug"\s*:\s*true') {
+    if ($AllowDebug) { Write-Warning 'Packing a TEST build: "debug" is true in GliderSuitConfig.json.' }
+    else { throw '"debug" is true in Mod\GliderSuit\Config\GliderSuitConfig.json. Set it to false for a release, or pass -AllowDebug for a test zip.' }
+}
+
 [xml]$modInfo = Get-Content -LiteralPath (Join-Path $modSource 'ModInfo.xml')
 $version = $modInfo.xml.Version.value
 if (-not $version) { throw 'ModInfo.xml has no Version value.' }
@@ -46,7 +56,9 @@ if (-not $version) { throw 'ModInfo.xml has no Version value.' }
 # File list: the mod folder without debug symbols, plus the README and the
 # changelog, all under GliderSuit/.
 $entries = [ordered]@{}
-Get-ChildItem -LiteralPath $modSource -Recurse -File | Where-Object { $_.Extension -ne '.pdb' } | ForEach-Object {
+# GliderSuitDev.json is Jason's tuning file and never ships (2026-10-27).
+Get-ChildItem -LiteralPath $modSource -Recurse -File |
+    Where-Object { $_.Extension -ne '.pdb' -and $_.Name -ne 'GliderSuitDev.json' } | ForEach-Object {
     $relative = $_.FullName.Substring($modSource.Length + 1).Replace('\', '/')
     $entries["GliderSuit/$relative"] = $_.FullName
 }

@@ -12,7 +12,11 @@ public sealed class ModApi : IModApi
         // the mod down with it. Events come first; patches last.
         try
         {
-            GliderMod.Directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? ".";
+            // A Windows dedicated server loads mod DLLs from bytes, so the assembly
+            // has no file location there; the game's own Mod.Path always works.
+            string location = Assembly.GetExecutingAssembly().Location;
+            GliderMod.Directory = mod != null && !string.IsNullOrEmpty(mod.Path) ? mod.Path
+                : !string.IsNullOrEmpty(location) ? Path.GetDirectoryName(location) : ".";
             Log.Out("[GliderSuit] Time.fixedDeltaTime = " + Time.fixedDeltaTime +
                 ", Time.timeScale = " + Time.timeScale);
             GliderMod.Reload();
@@ -39,7 +43,7 @@ public sealed class ModApi : IModApi
 
 internal static class GliderMod
 {
-    internal const string Version = "0.6.2";
+    internal const string Version = "1.0.0";
     internal static string Directory = "";
     internal static GliderConfig Settings = new GliderConfig();
 

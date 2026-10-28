@@ -21,6 +21,17 @@ internal static class GliderEquip
         return HasMod(equipment.GetSlotItem((int)EquipmentSlots.Chest));
     }
 
+    /// <summary>
+    /// HasBuff, but a buff already removed and waiting for the next buff tick
+    /// counts as gone. HasBuff still reports it, which kept another player's wings
+    /// open until that tick and made the owner resend the removal every frame.
+    /// </summary>
+    internal static bool HasLiveBuff(EntityAlive entity, string name)
+    {
+        BuffValue buff = entity != null && entity.Buffs != null ? entity.Buffs.GetBuff(name) : null;
+        return buff != null && !buff.Remove;
+    }
+
     private static bool HasMod(ItemValue item)
     {
         if (item == null || item.IsEmpty()) return false;

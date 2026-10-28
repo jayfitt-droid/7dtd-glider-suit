@@ -12,8 +12,8 @@
     <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
     <Deterministic>true</Deterministic>
     <DebugType>portable</DebugType>
-    <!-- Game install in one place. Override with: dotnet build -p:GamePath=D:\other\v3.3 -->
-    <GamePath Condition="'$(GamePath)' == ''">C:\7D2D\Custom\v3.3</GamePath>
+    <!-- Game install in one place. Override with: dotnet build -p:GamePath=D:\other\v3.4 -->
+    <GamePath Condition="'$(GamePath)' == ''">C:\7D2D\Custom\v3.4</GamePath>
     <ModOutputPath>..\..\Mod\GliderSuit\</ModOutputPath>
   </PropertyGroup>
 

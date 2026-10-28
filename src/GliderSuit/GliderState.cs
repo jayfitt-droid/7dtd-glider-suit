@@ -29,6 +29,8 @@ internal static class GliderState
     internal static float PitchDeg;
     internal static float HeadingDeg;
     internal static float Bank;
+    /// <summary>The heading's turn rate, deg/s, smoothed; the bank follows it.</summary>
+    internal static float HeadingRate;
     internal static float StallStartTime;
 
     /// <summary>True from opening until the nose reaches the glide angle or the player takes over.</summary>
@@ -102,6 +104,7 @@ internal static class GliderState
         PitchDeg = 0f;
         HeadingDeg = 0f;
         Bank = 0f;
+        HeadingRate = 0f;
         StallStartTime = 0f;
         EasingToTrim = false;
         ClimbTestUntil = 0f;

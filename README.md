@@ -1,15 +1,21 @@
 # Glider Suit
 
-A chest-armor ("Outfit") modification for **7 Days to Die v3.3** that unfolds into
+A chest-armor ("Outfit") modification for **7 Days to Die v3.4**, for single player
+and multiplayer (peer-hosted games and dedicated servers), that unfolds into
 a homemade hang glider. Press Jump in mid-air, and a harness and a pair of
 tarp-and-tent-pole wings open on your back.
 
-> **Status: 0.5.3, pre-release.** Flight, crashes, landings, folding, water,
-> ladders, weapons, dying in the air and the worn visuals have been tested in game
-> in single-player v3.3.0 (b18). The schematic's trader entry is confirmed in
-> the running game but it has not yet been seen in a trader or a container (that
-> needs a long playthrough); the tier-1 loot entry (0.5.2) has not been checked in
-> game, and the Parachute exclusion is untested.
+> **Status: 1.0.0-beta** (the game shows 1.0.0). Built for v3.4 (b6).
+> Flight, crashes, landings, folding, water, ladders, weapons, dying in the air
+> and the worn visuals have been tested in single player. Multiplayer has been
+> tried on a dedicated server with two players, each seeing the other's wings
+> open, bank and fold. Not yet tried: a peer-hosted game, joining while someone
+> is gliding, and hearing another player's wind. The schematic has not yet been
+> seen in a trader or a container (that needs a long playthrough), and the
+> Parachute exclusion is untested.
+>
+> **Known issue:** in third person, holding a weapon twists the chest, and the
+> harness turns with it, so it sits off centre on your back.
 
 ## What it does
 
@@ -25,8 +31,7 @@ tarp-and-tent-pole wings open on your back.
   of speed and the glider **stalls and nosedives**; hold the nose a little below
   level and it will not. Pulling up turns speed back into height, so a fast
   dive can zoom you up a few metres above where you took off, but hold Back
-  too long and you stall. Set `takeoff_ceiling` to `true` to cap the glider at
-  its takeoff height instead.
+  too long and you stall.
 - Opening the wings eases you into the normal glide by itself; press Forward or
   Back and the nose is yours, and stays where you leave it. A key you were
   already holding when the wings opened (Forward from a running jump) does
@@ -36,7 +41,7 @@ tarp-and-tent-pole wings open on your back.
   all still apply. A hit while gliding counts at half its speed
   (`crash_damage_scale`), so damage starts at about cruise speed. Folding the
   wings in mid-air hands you back to a normal fall with full fall damage; you
-  keep your forward speed, slowed gently by the air (`fold_air_drag`), and a
+  keep your forward speed, slowed gently by the air, and a
   wall hit at that speed hurts at the full rate.
 - Flying onto a ladder folds the wings and costs nothing.
 - A stall recovers into a glide by itself once speed returns; pulling Back helps
@@ -45,7 +50,7 @@ tarp-and-tent-pole wings open on your back.
   takes over. Press Jump to let go, then press Jump again to open the wings.
 - Half a second after opening, the camera switches to third person, and folding
   puts it back to the view you had chosen. Set `auto_third_person` to `false`
-  to stay in first person; `third_person_after_ms` sets the delay. Press the view key while gliding to change it as usual.
+  to stay in first person. Press the view key while gliding to change it as usual.
 - In third person while gliding, the camera sits centred behind you like the
   vehicle camera and pulls back as you speed up. Aiming down sights uses the
   game's usual close view. Set `glide_camera` to `false` for the game's normal
@@ -60,6 +65,28 @@ can be fitted in an outfit at a time.
 1. Make sure EAC is off (the mod's `ModInfo.xml` sets `SkipWithAntiCheat`).
 2. Copy the `GliderSuit` folder into `7 Days to Die/Mods/`.
 3. Launch without EAC.
+
+### Multiplayer
+
+Install the same version of the mod on the server and on every player's game.
+
+- **Dedicated server:** unzip it into the server's `Mods` folder, next to
+  `0_TFP_Harmony`, and turn Easy Anti-Cheat off in `serverconfig.xml`
+  (`EACEnabled` set to `false`).
+- **Peer-hosted game:** the host and everyone who joins installs it and starts
+  the game with Easy Anti-Cheat off.
+- **Why every player needs it:** the server sends its item, recipe and buff
+  settings to players as they join, but not the mod's code, the wing model or
+  the inventory icon. A player who joins without it is not kicked, but cannot
+  glide and does not see other players' wings.
+- The mod adds no network messages of its own. Each player's game flies that
+  player's glider and decides their crash damage; other players' games draw the
+  wings, the body pose and the wind from the "wings open" state the game already
+  shares between players.
+- `GliderSuitConfig.json` is read by each player's own game and is not sent by
+  the server. To keep everyone the same, give all players the same file.
+- `glider` console commands need admin permission on a server, like the game's
+  own cheat commands.
 
 Get it in game with the workbench recipe (60 cloth, 8 metal pipe, 6 duct tape,
 10 leather, 1 sewing kit, 4 mechanical parts, 2 springs) after reading the
@@ -96,14 +123,17 @@ from, so read `7DaysToDie_Data/output_log.txt`.
 
 ## Configuration
 
-Everything tunable lives in `Config/GliderSuitConfig.json` (JSON with `//`
-comments). Each key has a default, an allowed range, and a comment; an invalid
-value logs a warning and falls back to the default. `glider reload` applies
-changes without restarting.
+`Config/GliderSuitConfig.json` (JSON with `//` comments) has the settings most
+players want: `cruise_speed`, `glide_ratio`, `launch_speed`, `turn_rate`,
+`crash_damage_scale`, `auto_third_person`, `glide_camera`, `camera_roll_angle`,
+`fp_wings`, `wind_volume` and `debug`. Each has a comment with its range; a
+value outside it is ignored and the default is used, with a warning in the log.
+`glider reload` applies changes without restarting.
 
-The interesting ones: `cruise_speed` (25 m/s), `glide_ratio` (12:1),
-`stall_speed` (8 m/s), `crash_damage_scale` (1.0 - set it to 0 for no crash
-damage), `wind_loop`, and the `worn_*` / `fp_*` placement offsets.
+Every other option keeps its built-in default. For development, an optional
+`Config/GliderSuitDev.json` holds every option; when it is present it is read
+after the player file and wins over it (`glider status` shows `devFile=True`).
+It is not included in the release zip.
 
 ## Building
 

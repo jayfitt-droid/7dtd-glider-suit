@@ -1,5 +1,51 @@
 # Changelog
 
+## 1.0.0-beta - 2026-10-27
+
+`ModInfo.xml` says 1.0.0. Built for 7 Days to Die v3.4 (b6). Multiplayer was
+tried on a v3.4 dedicated server with two players on separate PCs: each saw the
+other's wings open, bank and fold, with no errors in the logs. Not yet tried: a
+peer-hosted game, joining while someone is gliding, and hearing another
+player's wind. Feedback on multiplayer is welcome.
+
+### Added
+
+- **Multiplayer**, in peer-hosted games and on dedicated servers. Other players
+  with the mod see your wings open, bank, tip into dives and fold, see your body
+  lie flat under them, and hear the wind from where you are. The mod sends no
+  network messages of its own, so a player without it is never kicked for that;
+  they just do not see the wings. Install the mod on the server and on every
+  player's game (see "Multiplayer" in `README.md`).
+
+### Changed
+
+- **7 Days to Die v3.4.** Built and tested against v3.4 (b6).
+- **A shorter settings file.** `GliderSuitConfig.json` now has the 11 settings
+  most players want. Every other option keeps its default, which is the value
+  it had in 0.6.3, so the glider flies the same.
+- **`debug` is off** in the shipped settings.
+- The item description no longer says you cannot climb above where you took
+  off; that limit has been off since 0.6.0.
+
+### Fixed
+
+- **The wings and body no longer flutter in a turn.**
+- On a dedicated server the mod could not find its own folder and would have
+  ignored its settings file.
+
+### Known issues
+
+- In third person, holding a weapon twists the chest, and the harness turns
+  with it, so it sits off centre on your back.
+
+## 0.6.3 - 2026-10-16
+
+### Fixed
+
+- **Aiming no longer gets the zoom stuck.** The automatic switch to third
+  person, and back when the wings fold, now waits until you stop aiming down
+  sights.
+
 ## 0.6.2 - 2026-10-15
 
 ### Changed

@@ -4,7 +4,7 @@
         pwsh -File tools\deploy.ps1
 #>
 param(
-    [string]$GamePath = 'C:\7D2D\Custom\v3.3'
+    [string]$GamePath = 'C:\7D2D\Custom\v3.4'
 )
 
 $ErrorActionPreference = 'Stop'

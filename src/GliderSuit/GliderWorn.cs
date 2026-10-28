@@ -38,6 +38,10 @@ internal static class GliderWorn
         Transform spine = Bone(catalog, "Spine3");
         if (spine == null) return;
 
+        // Another player's world rig is driven by GliderRemote and must never take
+        // the local player's slot: with one shared slot, a second glider in the
+        // game made the local wings stop following their owner.
+        bool local = kind == WornKind.Ui || entity is EntityPlayerLocal;
         bool hasGlider = GliderEquip.HasGlider(entity);
         bool firstPerson = IsFirstPerson(entity);
         bool wanted = hasGlider && (kind == WornKind.Ui || !firstPerson);
@@ -54,7 +58,7 @@ internal static class GliderWorn
                     " firstPerson=" + firstPerson);
             }
             if (kind == WornKind.Ui) preview = null;
-            else world = null;
+            else if (local) world = null;
             return;
         }
 
@@ -68,6 +72,7 @@ internal static class GliderWorn
             wings.BaseRotation = BodyAlignment(catalog, spine);
             Place(wings, config.WornOffset, config.WornRotation, config.WornScale);
             Log.Out("[GliderSuit] worn " + kind + " wings attached to " + spine.name +
+                (local ? "" : " of " + entity.EntityName) +
                 ", body alignment " + wings.BaseRotation.eulerAngles);
         }
         else
@@ -76,8 +81,31 @@ internal static class GliderWorn
         }
 
         if (kind == WornKind.Ui) preview = wings;
-        else world = wings;
-        wings.SetFold(kind == WornKind.Ui ? 0f : GliderState.FoldFraction, false);
+        else if (local) world = wings;
+        // A rebuilt rig starts in its authored, open pose, so set the fold at once.
+        wings.SetFold(local ? (kind == WornKind.Ui ? 0f : GliderState.FoldFraction)
+            : GliderRemote.FoldOf(entity.entityId), false);
+    }
+
+    /// <summary>
+    /// The game does not rebuild another player's rig when only the mods in their
+    /// worn armor change, so GliderRemote calls this every half second for them.
+    /// </summary>
+    internal static void SyncRemote(EntityPlayer player)
+    {
+        if (player == null || player is EntityPlayerLocal) return;
+        EModelSDCS model = player.emodel as EModelSDCS;
+        if (model == null || model.boneCatalog == null) return;
+        Sync(player, model.boneCatalog, WornKind.World);
+    }
+
+    /// <summary>The wing set on another player's back, or null.</summary>
+    internal static GliderWings FindWorld(EntityAlive entity)
+    {
+        EModelSDCS model = entity != null ? entity.emodel as EModelSDCS : null;
+        Transform spine = model != null ? Bone(model.boneCatalog, "Spine3") : null;
+        Transform found = spine != null ? spine.Find(RootName) : null;
+        return found != null ? found.GetComponent<GliderWings>() : null;
     }
 
     /// <summary>True while the third-person set is attached and alive.</summary>
@@ -98,11 +126,11 @@ internal static class GliderWorn
     /// lays the wings level. They follow the flight pitch by half and bank in turns
     /// by the same angle as the body (D43), so the two roll together.
     /// </summary>
-    private static Quaternion FlightRotation(EntityPlayerLocal player, GliderConfig config)
+    internal static Quaternion FlightRotation(Transform body, GliderConfig config, float flightPitch, float flightBank)
     {
-        float pitch = GliderPose.WingLevelPitch - 0.5f * GliderState.PitchDeg;
-        float bank = -config.BodyBankAngle * GliderState.Bank;
-        return player.transform.rotation *
+        float pitch = GliderPose.WingLevelPitch - 0.5f * flightPitch;
+        float bank = -config.BodyBankAngle * flightBank;
+        return body.rotation *
             Quaternion.AngleAxis(bank, Vector3.forward) *
             Quaternion.Euler(pitch, 0f, 0f);
     }
@@ -165,7 +193,7 @@ internal static class GliderWorn
             // No bank of their own: the wings are fixed to the back, and GliderPose
             // banks the whole body.
             world.Tick(config, GliderState.Speed, GliderState.Phase == GliderPhase.Stalled, fold, 0f);
-            world.AimWings(FlightRotation(player, config), fold);
+            world.AimWings(FlightRotation(player.transform, config, GliderState.PitchDeg, GliderState.Bank), fold);
         }
         if (preview != null)
         {

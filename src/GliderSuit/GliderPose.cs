@@ -22,15 +22,24 @@ internal static class GliderPose
 
     internal static void LateUpdate(EntityPlayerLocal player, GliderConfig config)
     {
-        float blend = GliderState.FoldFraction;
-        if (blend <= 0.001f || player == null || player.bFirstPersonView) return;
+        if (player == null || player.bFirstPersonView) return;
+        Apply(player, config, GliderState.FoldFraction, GliderState.PitchDeg, GliderState.Bank);
+    }
 
-        EModelSDCS model = player.emodel as EModelSDCS;
+    /// <summary>
+    /// Poses any player's body: the local one from GliderState, another player's
+    /// from what GliderRemote estimates of their flight.
+    /// </summary>
+    internal static void Apply(EntityAlive entity, GliderConfig config, float blend, float flightPitch, float flightBank)
+    {
+        if (blend <= 0.001f || entity == null) return;
+        EModelSDCS model = entity.emodel as EModelSDCS;
         if (model == null || model.boneCatalog == null) return;
 
-        Vector3 right = player.transform.right;
-        float bodyPitch = BodyPitch(config, blend);
-        float bank = config.BodyBankAngle * GliderState.Bank * blend;
+        Vector3 right = entity.transform.right;
+        float bodyPitch = BodyPitch(config, blend, flightPitch);
+        float bank = config.BodyBankAngle * flightBank * blend;
+        EntityAlive player = entity;
 
         // Bank after tipping (D43): the roll is about the flight direction, so the
         // lying body rolls with the wings. Rolling first, about the upright body's
@@ -51,9 +60,9 @@ internal static class GliderPose
     /// in world space (D27), so the body can lie flatter than the wing model's
     /// WingLevelPitch (D36).
     /// </summary>
-    internal static float BodyPitch(GliderConfig config, float blend)
+    internal static float BodyPitch(GliderConfig config, float blend, float flightPitch)
     {
-        return (config.BodyPitchBase - 0.5f * GliderState.PitchDeg) * blend;
+        return (config.BodyPitchBase - 0.5f * flightPitch) * blend;
     }
 
     /// <summary>

@@ -318,10 +318,13 @@ public sealed class ConsoleCmdGlider : ConsoleCmdAbstract
             " active=" + player.Buffs.HasBuff(GliderController.ActiveBuff) +
             " ceilingY=" + GliderState.CeilingY.ToString("F1") +
             " lastFold=" + GliderState.LastFoldReason);
+        Log.Out("[GliderSuit] game=" + (SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer ? "host" : "client") +
+            " other players gliding: " + GliderRemote.Describe());
         Log.Out("[GliderSuit] cruise_speed=" + config.CruiseSpeed + " glide_ratio=" + config.GlideRatio +
             " stall_speed=" + config.StallSpeed + " stall_recover_speed=" + config.StallRecoverSpeed +
             " turn_rate=" + config.TurnRate + " unfold_time=" + config.UnfoldTime +
-            " crash_damage_scale=" + config.CrashDamageScale + " debug=" + config.Debug);
+            " crash_damage_scale=" + config.CrashDamageScale + " debug=" + config.Debug +
+            " devFile=" + config.DevFile);
     }
 
     private static void Debug(List<string> args)
